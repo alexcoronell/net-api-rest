@@ -1,56 +1,58 @@
 using webapi.Models;
-
 namespace webapi.Services;
 
-public class CategoryService
+public class CategoryService : ICategoryService
 {
-    TasksContext dbContext;
+    TasksContext context;
 
-    public CategoryService(TasksContext _dbContext)
+    public CategoryService(TasksContext dbcontext)
     {
-        dbContext = _dbContext;
+        context = dbcontext;
     }
-
-    public IEnumerable<CategoryService> Get()
+    
+    public IEnumerable<Category> Get()
     {
-        return (IEnumerable<CategoryService>)dbContext.Categories;
+        return context.Categories;
     }
 
     public async void Save(Category category)
     {
-        dbContext.Add(category);
-        await dbContext.SaveChangesAsync();
-
+        context.Add(category);
+        await context.SaveChangesAsync();
     }
 
     public async void Update(Guid id, Category category)
     {
-        var currentCategory = dbContext.Categories.Find(id);
-        if (currentCategory != null)
+        var currentCategory = context.Categories.Find(id);
+
+        if(currentCategory != null)
         {
             currentCategory.Name = category.Name;
             currentCategory.Description = category.Description;
             currentCategory.Weight = category.Weight;
-            await dbContext.SaveChangesAsync();
+
+            await context.SaveChangesAsync();
         }
     }
 
     public async void Delete(Guid id)
     {
-        var currentCategory = dbContext.Categories.Find(id);
-        if (currentCategory != null)
-        {
-            dbContext.Remove(currentCategory);
-            await dbContext.SaveChangesAsync();
+        var currentCategory = context.Categories.Find(id);
 
+        if(currentCategory != null)
+        {
+            context.Remove(currentCategory);
+            await context.SaveChangesAsync();
         }
     }
 }
 
 public interface ICategoryService
 {
-    IEnumerable<CategoryService> Get();
+    IEnumerable<Category> Get();
     void Save(Category category);
+
     void Update(Guid id, Category category);
+
     void Delete(Guid id);
 }

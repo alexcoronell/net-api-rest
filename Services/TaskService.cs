@@ -1,59 +1,60 @@
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using webapi.Models;
-
 namespace webapi.Services;
 
-public class TaskService
+public class TaskService: ITaskService
 {
-    TasksContext dbContext;
+    TasksContext context;
 
-    public TaskService(TasksContext _dbContext)
+    public TaskService(TasksContext dbcontext)
     {
-        dbContext = _dbContext;
+        context = dbcontext;
     }
-
-    public IEnumerable<TaskService> Get()
+    
+    public IEnumerable<Models.Task> Get()
     {
-        return (IEnumerable<TaskService>)dbContext.Tasks;
+        return context.Tasks;
     }
 
     public async void Save(Models.Task task)
     {
-        dbContext.Add(task);
-        await dbContext.SaveChangesAsync();
-
+        context.Add(task);
+        await context.SaveChangesAsync();
     }
 
     public async void Update(Guid id, Models.Task task)
     {
-        var currentTask = dbContext.Tasks.Find(id);
-        if (currentTask != null)
+        var currentTask = context.Tasks.Find(id);
+
+        if(currentTask != null)
         {
-            currentTask.CategoryId = task.CategoryId;
             currentTask.Title = task.Title;
             currentTask.Description = task.Description;
+            currentTask.CategoryId = task.CategoryId;
             currentTask.PriorityTask = task.PriorityTask;
-            await dbContext.SaveChangesAsync();
 
+            await context.SaveChangesAsync();
         }
     }
 
     public async void Delete(Guid id)
     {
-        var currentTask = dbContext.Tasks.Find(id);
-        if (currentTask != null)
-        {
-            dbContext.Remove(currentTask);
-            await dbContext.SaveChangesAsync();
+        var currentTask = context.Categories.Find(id);
 
+        if(currentTask != null)
+        {
+            context.Remove(currentTask);
+            await context.SaveChangesAsync();
         }
     }
+
 }
 
 public interface ITaskService
 {
-    IEnumerable<TaskService> Get();
+    IEnumerable<Models.Task> Get();
     void Save(Models.Task task);
+
     void Update(Guid id, Models.Task task);
+
     void Delete(Guid id);
 }
