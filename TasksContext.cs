@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using projectef.Models;
-using System.Threading;
+using webapi.Models;
 
-namespace projectef
+namespace webapi
 {
     public class TasksContext : DbContext
     {
